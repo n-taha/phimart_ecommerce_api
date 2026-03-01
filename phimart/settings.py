@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     'drf_yasg',
-    'rest_framework',
+    "corsheaders",
+   'rest_framework',
     'djoser',
     'api',
     'users',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -71,6 +73,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'phimart.wsgi.app'
+
+CORS_ALLOWED_ORIGINS = [
+  'http://localhost:5173'
+]
 
 # Cloudinary Configuration
 cloudinary.config(
@@ -180,7 +186,14 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
         'current_user': 'users.serializers.UserSerializer'
-    }
+    },
+    'EMAIL_FRONTEND_PROTOCOL': config('FRONTEND_PROTOCOL'),
+    'EMAIL_FRONTEND_DOMAIN': config('FRONTEND_DOMAIN'),
+    'EMAIL_FRONTEND_SITE_NAME': 'PhiMart',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
 }
 
 
@@ -194,3 +207,10 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
